@@ -1,2 +1,3 @@
-# translator
-Torii image translator API application only provides batch API requests. The code was created using artificial intelligence; I created it here only to store it as a backup.
+pip install -r requirements.txt
+python3 main.py
+use Linux for the best experience
