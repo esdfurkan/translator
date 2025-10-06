@@ -1,8 +1,0 @@
-requests
-python-dotenv
-Pillow
-nextcloud-api-wrapper
-webdavclient3
-configparser
-discord.py
-python-telegram-bot
