@@ -6,3 +6,4 @@ use Linux for the best experience
 
 Latest version
 "v0.0.3"
+https://github.com/esdfurkan/translator/tree/v0.0.3
