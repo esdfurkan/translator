@@ -1,6 +1,7 @@
 import os
 import sys
 import configparser
+import json
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -8,12 +9,10 @@ def clear_screen():
 def select_language():
     lang_dir = "lang"
     if not os.path.isdir(lang_dir):
-        print("FATAL: 'lang' directory not found.")
-        sys.exit(1)
+        print("FATAL: 'lang' directory not found."); sys.exit(1)
     languages = [f for f in os.listdir(lang_dir) if f.endswith('.ini')]
     if not languages:
-        print(f"FATAL: No language (.ini) files found in '{lang_dir}' directory.")
-        sys.exit(1)
+        print(f"FATAL: No language (.ini) files found in '{lang_dir}' directory."); sys.exit(1)
     
     print("--- Dil Seçimi / Language Selection ---")
     lang_map = {}
@@ -38,32 +37,40 @@ def load_language_strings(lang_file_path):
 
 def main():
     clear_screen()
-    selected_lang_file = select_language()
-    lang = load_language_strings(selected_lang_file)
-    
+    profile_path = 'profile.json'
+    profile = None
+    lang = None
+
+    if os.path.exists(profile_path):
+        with open(profile_path, 'r', encoding='utf-8') as f:
+            profile = json.load(f)
+        lang = load_language_strings(profile['language_file'])
+    else:
+        selected_lang_file = select_language()
+        lang = load_language_strings(selected_lang_file)
+        profile = {'language_file': selected_lang_file}
+
     clear_screen()
     
     try:
         import cli_mode
-        import bot_mode
+        import archive_mode
     except ImportError as e:
-        print(f"HATA: Gerekli modüller bulunamadı: {e}")
-        print("Lütfen tüm .py dosyalarının aynı dizinde olduğundan emin olun.")
-        return
+        print(f"HATA: Gerekli modüller bulunamadı: {e}"); return
 
     while True:
-        print(f"\n{lang.get('HEADER_MAIN_MENU', '--- Translation Automation System ---')}")
-        print(lang.get('PROMPT_SELECT_MODE_CLI', '[1] Step-by-Step Translation (For one-time jobs)'))
-        print(lang.get('PROMPT_SELECT_MODE_BOT', '[2] Start Automatic Bot (Listens for links from chat)'))
+        print(f"\n{lang.get('HEADER_MAIN_MENU', '--- Translation Tool ---')}")
+        print(lang.get('PROMPT_SELECT_MODE_CLI', '[1] Translate Images in a Folder'))
+        print(lang.get('PROMPT_SELECT_MODE_ARCHIVE', '[2] Translate an Archive File (PDF, CBZ, etc.)'))
         print(f"\n{lang.get('PROMPT_EXIT', 'Press [Q] to exit.')}")
         
         choice = input(f"\n{lang.get('PROMPT_CHOICE', 'Your choice: ')}").lower().strip()
 
         if choice == '1':
-            cli_mode.start_cli(lang)
+            cli_mode.start_cli(lang, profile)
             break
         elif choice == '2':
-            bot_mode.start_bot(lang)
+            archive_mode.start_archive_cli(lang, profile)
             break
         elif choice == 'q':
             break
