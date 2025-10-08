@@ -1,0 +1,7 @@
+requests
+python-dotenv
+Pillow
+PyMuPDF
+rarfile
+py7zr
+EbookLib
